@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Mobius{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <style>
+    .sidebar {
+        width: 200px;
+        background-color: #f7f7f7;
+        position: fixed;
+        height: 100%;
+        padding-top: 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .sidebar ul li {
+        margin: 10px 0;
+    }
+    .sidebar ul li a {
+        color: #363636;
+        padding: 10px 15px;
+        display: block;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 4px;
+    }
+    .sidebar ul li a:hover {
+        background-color: #3273dc;
+        color: #fff;
+    }
+    .main-content {
+        margin-left: 220px;
+        padding: 20px;
+    }
+  </style>
+  {% block styles %}
+  <!-- Aquí puedes añadir estilos adicionales desde las páginas que extienden esta plantilla -->
+  {% endblock %}
+</head>
+<body>
+  <div class="sidebar">
+    <ul>
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'task_list' %}">Task List</a></li>
+      <li><a href="{% url 'habit_list' %}">Habit Tracker</a></li>
+      <li><a href="{% url 'calendar' %}">Calendar</a></li>
+      <li><a href="{% url 'flow' %}">Flow</a></li>
+      <li><a href="{% url 'my_rank' %}">My Rank</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  {% block scripts %}
+  <!-- Aquí se cargarán los scripts adicionales desde las páginas que extienden esta plantilla -->
+  {% endblock %}
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List</title>
+    <!-- Incluir Bulma CSS desde el CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <!-- Incluir el script de SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <style>
+        .columns.is-multiline {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+        }
+        .box {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+        .task-item input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+        .task-item span {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    {% extends "base.html" %}
+
+    {% block content %}
+    
+    <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered">Task List</h1>
+
+            <!-- Contenedor de los grupos -->
+            <div class="columns is-multiline" id="group-list">
+                {% for group, tasks in groups.items %}
+                    <div class="column is-one-quarter">
+                        <div class="box group" data-group="{{ group }}">
+                            <h2 class="subtitle">
+                                {{ group|default:"Ungrouped" }}
+                            </h2>
+                            <ul>
+                                {% for task in tasks %}
+                                    <li class="task-item">
+                                        <input type="checkbox" onclick="toggleTaskCompletion({{ task.id }}, this)" {% if task.completed %}checked{% endif %}>
+                                        <span style="{% if task.completed %}text-decoration: line-through !important;{% endif %}">
+                                            <a href="{% url 'edit_task' task.id %}">{{ task.title }}</a>
+                                        </span>
+                                        {% if task.due_date %}
+                                            <span> - {{ task.due_date|date:"d/m" }}</span>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="buttons">
+                <a href="{% url 'add_task' %}" class="button is-primary">Add Task</a>
+                <a href="{% url 'view_calendar' %}" class="button is-link">View Calendar</a>
+            </div>
+
+            <!-- Botón para eliminar todas las tareas completadas -->
+            <form method="post" action="{% url 'delete_completed_tasks' %}" onsubmit="return confirm('Are you sure you want to delete all completed tasks?');">
+                {% csrf_token %}
+                <button type="submit" class="button is-danger is-fullwidth">Delete All Completed Tasks</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Script para manejar el drag and drop -->
+    <script>
+        var sortable = new Sortable(document.getElementById('group-list'), {
+            animation: 150, // Animación suave al arrastrar
+            onEnd: function (evt) {
+                var order = [];
+                document.querySelectorAll('#group-list .group').forEach(function (el, index) {
+                    order.push({
+                        group: el.getAttribute('data-group'),
+                        position: index + 1
+                    });
+                });
+
+                // Enviar el nuevo orden al servidor usando fetch
+                fetch('{% url "reorder_groups" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(order)
+                }).then(response => {
+                    if (response.status === 200) {
+                        // Orden guardado correctamente
+                    } else {
+                        alert('Failed to save order.');
+                    }
+                });
+            }
+        });
+
+        function toggleTaskCompletion(taskId, checkbox) {
+    fetch(`/tasks/toggle-task-completion/${taskId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (checkbox.checked) {
+                checkbox.nextElementSibling.style.textDecoration = "line-through";
+                checkbox.nextElementSibling.style.color = "gray"; // Opcional: Cambia el color del texto
+            } else {
+                checkbox.nextElementSibling.style.textDecoration = "none";
+                checkbox.nextElementSibling.style.color = "black"; // Opcional: Cambia el color del texto
+            }
+        } else {
+            alert('Failed to update task status.');
+        }
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+    </script>
+    {% endblock %}
+
+</body>
+</html>

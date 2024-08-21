@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Task</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+<body>
+    <h1>Are you sure you want to delete this task?</h1>
+    <p>{{ task.title }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" style="background-color: red; color: white;">Yes, Delete</button>
+    </form>
+    <a href="{% url 'edit_task' task.id %}">Cancel</a>
+</body>
+</html>

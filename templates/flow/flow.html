@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Flow Timer{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title">Flow Timer</h1>
+        <div id="timer" class="has-text-centered">
+            <h2 class="title is-2" id="time-display">00:00:00</h2>
+            <div class="select">
+                <select id="pause-interval">
+                    <option value="1800">Pausa cada 30 minutos</option>
+                    <option value="3600">Pausa cada 1 hora</option>
+                    <option value="7200" selected>Pausa cada 2 horas</option>
+                </select>
+            </div>
+            <br><br>
+            <button class="button is-success" id="start-btn">Start</button>
+            <button class="button is-warning" id="stop-btn" disabled>Stop</button>
+            <button class="button is-danger" id="reset-btn" disabled>Reset</button>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let timer;
+    let totalTime = 0;  // Total time in seconds
+    let pauseInterval = 7200; // Default to 2 hours in seconds
+
+    const timeDisplay = document.getElementById('time-display');
+    const startBtn = document.getElementById('start-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const pauseIntervalSelect = document.getElementById('pause-interval');
+
+    pauseIntervalSelect.addEventListener('change', function() {
+        pauseInterval = parseInt(this.value);
+    });
+
+    function startTimer() {
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        resetBtn.disabled = true;
+
+        timer = setInterval(function() {
+            totalTime++;
+            let hours = Math.floor(totalTime / 3600);
+            let minutes = Math.floor((totalTime % 3600) / 60);
+            let seconds = totalTime % 60;
+
+            timeDisplay.textContent = 
+                (hours < 10 ? '0' + hours : hours) + ':' +
+                (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                (seconds < 10 ? '0' + seconds : seconds);
+
+            // Check for pause interval limit
+            if (totalTime % pauseInterval === 0) {
+                alert("¡Enhorabuena por mantener tu Flow! Es hora de tomar un descanso.");
+                stopTimer(); // Automatically stop the timer
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timer);
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        resetBtn.disabled = false;
+    }
+
+    function resetTimer() {
+        totalTime = 0;
+        timeDisplay.textContent = "00:00:00";
+        resetBtn.disabled = true;
+    }
+
+    startBtn.addEventListener('click', startTimer);
+    stopBtn.addEventListener('click', stopTimer);
+    resetBtn.addEventListener('click', resetTimer);
+
+    function notifyUser(message) {
+        if (Notification.permission === "granted") {
+            new Notification(message);
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    new Notification(message);
+                }
+            });
+        }
+    }
+
+    if ("Notification" in window) {
+        Notification.requestPermission();
+    }
+</script>
+{% endblock %}
