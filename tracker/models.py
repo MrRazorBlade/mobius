@@ -29,15 +29,11 @@ class HabitRecord(models.Model):
         return f"{self.habit.name} on {self.date}"
 
     def complete_habit(self):
-        print(f"Intentando completar hábito: {self.habit.name}, Completado: {
-              self.completed}, Recompensa reclamada: {self.reward_claimed}")
         if not self.completed and not self.reward_claimed:
             self.completed = True
             self.reward_claimed = True  # Marca la recompensa como reclamada
             self.save()
             self.habit.user.add_points(1)
-            print(f"Puntos después de completar hábito: {
-                  self.habit.user.points}")
             self.habit.user.save()  # Asegurarse de guardar los cambios en el usuario
         else:
             print("El hábito ya fue completado o la recompensa ya fue reclamada.")
