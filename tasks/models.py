@@ -18,8 +18,7 @@ class Task(models.Model):
         return self.title
 
     def complete_task(self):
-        print(f"Intentando completar tarea: {self.title}, Completada: {
-              self.completed}, Recompensa reclamada: {self.reward_claimed}")
+        print(f"Intentando completar tarea: {self.title}, Completada: {self.completed}, Recompensa reclamada: {self.reward_claimed}")
         if not self.completed and not self.reward_claimed:
             self.completed = True
             self.reward_claimed = True  # Marca la recompensa como reclamada
