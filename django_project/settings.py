@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'sweeping-heron-vigorously.ngrok-free.app',  # URL de ngrok
+    'mobiustimetracker.onrender.com',  # URL de Render
 ]
 
 # Application definition
