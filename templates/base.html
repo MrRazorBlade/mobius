@@ -50,6 +50,16 @@
         font-weight: bold;
         margin-top: 10px;
     }
+    .footer-note {
+      font-size: 11px;
+      text-align: center;
+      padding: 20px 10px;
+      color: #888;
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      width: 200px;
+  }
   </style>
   {% block styles %}
   <!-- Aquí puedes añadir estilos adicionales desde las páginas que extienden esta plantilla -->
@@ -71,7 +81,12 @@
       <li><a href="{% url 'flow' %}">Flow</a></li>
       <li><a href="{% url 'my_rank' %}">My Rank</a></li>
     </ul>
+
+  <div class="footer-note">
+    Project developed as part of the IB Diploma Program<br>
+    Candidate nº 048016-0101
   </div>
+</div>  
 
   <div class="main-content">
     {% block content %}
@@ -81,5 +96,6 @@
   {% block scripts %}
   <!-- Aquí se cargarán los scripts adicionales desde las páginas que extienden esta plantilla -->
   {% endblock %}
+
 </body>
 </html>
