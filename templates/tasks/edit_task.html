@@ -100,7 +100,7 @@
                             </div>
                             <div class="field is-grouped is-grouped-centered">
                                 <div class="control">
-                                    <button type="submit" class="button is-primary">Save Changes</button>
+                                    <button type="submit" class="button is-link">Save Changes</button>
                                 </div>
                                 <div class="control">
                                     <a href="{% url 'task_list' %}" class="button is-light">Back to Task List</a>
@@ -111,7 +111,7 @@
                     <div class="box" style="margin-top: 20px;">
                         <form method="post" action="{% url 'delete_task' task.id %}" onsubmit="return confirm('Are you sure you want to delete this task?');">
                             {% csrf_token %}
-                            <button type="submit" class="button is-danger is-fullwidth">Delete Task</button>
+                            <button type="submit" class="button is-fullwidth" style="background-color: #C70039; color: white;">Delete Task</button>
                         </form>
                     </div>
                 </div>

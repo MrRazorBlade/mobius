@@ -25,8 +25,11 @@ SECRET_KEY = 'django-insecure-ou*-7n2h98ie3)3drbb@dux&2&^%d%5q*3ft0^+*-=pb2c$5%@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'sweeping-heron-vigorously.ngrok-free.app',  # URL de ngrok
+]
 
 # Application definition
 
@@ -41,7 +44,7 @@ INSTALLED_APPS = [
     'tasks',         # App for tasks
     'task_calendar',  # App for calendar,        # App for habit tracking
     'flow',
-    'habits',         # App for flow tracking
+    'tracker',         # App for flow tracking
     'my_rank',       # App for user rank tracking
     'crispy_forms',
     'crispy_bulma',
@@ -126,7 +129,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -137,3 +140,11 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://sweeping-heron-vigorously.ngrok-free.app',
+]

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  {% load static %}
   <meta charset="utf-8">
   <title>{% block title %}Mobius{% endblock %}</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
@@ -36,6 +37,19 @@
         margin-left: 220px;
         padding: 20px;
     }
+    .logo-container {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .logo-container img {
+        max-width: 60px;
+        height: auto;
+    }
+    .logo-container p {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
   </style>
   {% block styles %}
   <!-- Aquí puedes añadir estilos adicionales desde las páginas que extienden esta plantilla -->
@@ -43,11 +57,17 @@
 </head>
 <body>
   <div class="sidebar">
+    <div class="logo-container">
+      <a href="{% url 'home' %}">
+        <img src="{% static 'images/mobius_logo.jpeg' %}" alt="Mobius Logo">
+        <p>Mobius</p>
+      </a>
+    </div>
     <ul>
-      <li><a href="{% url 'home' %}">Home</a></li>
+      
       <li><a href="{% url 'task_list' %}">Task List</a></li>
-      <li><a href="{% url 'habit_list' %}">Habit Tracker</a></li>
       <li><a href="{% url 'calendar' %}">Calendar</a></li>
+      <li><a href="{% url 'tracker:index' %}">Habit Tracker</a></li>
       <li><a href="{% url 'flow' %}">Flow</a></li>
       <li><a href="{% url 'my_rank' %}">My Rank</a></li>
     </ul>

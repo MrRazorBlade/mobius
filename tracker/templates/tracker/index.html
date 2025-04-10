@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% extends "base.html" %}
+
+{% load custom_filters %}
+
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker - {{ current_month_name }} {{ current_year }}</title>
+    <!-- Enlace a Bulma CSS desde CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 0.75rem;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .container {
+            margin-top: 2rem;
+        }
+        .pagination {
+            margin-top: 1rem;
+        }
+        .table-actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .table-actions a {
+            width: auto; /* Botones con ancho automático */
+            max-width: 100px; /* Ancho máximo para los botones */
+            text-align: center;
+        }
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table {
+            min-width: 800px; /* Ajusta este valor según sea necesario */
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+        .button-group .button {
+            margin: 0 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="hero" style="background-color: #D1651D;">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title" style="color: #FAFAFA" >
+                    Habit Tracker - {{ current_month_name }} {{ current_year }}
+                </h1>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Sección de Completion Rate -->
+        <div class="box">
+            <h2 class="subtitle">Completion Rate: {{ completion_rate|floatformat:2 }}%</h2>
+        </div>
+
+        <!-- Tabla de Hábitos -->
+        {% if habits %}
+            <div class="box table-container">
+                <table class="table is-striped is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>Habit</th>
+                            {% for day in days %}
+                                <th>{{ day }}</th>
+                            {% endfor %}
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for habit in habits %}
+                            <tr>
+                                <td>{{ habit.name }}</td>
+                                {% for day in days %}
+                                    <td>
+                                        <form method="POST" action="{% url 'tracker:toggle_habit_record' habit.id day current_month current_year %}">
+                                            {% csrf_token %}
+                                            <input type="checkbox" {% if habit.records|get_item:day %}checked{% endif %} onchange="this.form.submit()">
+                                        </form>
+                                    </td>
+                                {% endfor %}
+                                <td class="table-actions">
+                                    <a href="{% url 'tracker:edit_habit' habit.id %}" class="button is-small is-info">Edit</a>
+                                    <a href="{% url 'tracker:delete_habit' habit.id %}" class="button is-small" style="background-color: #C70039; color: white;">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="box">
+                <p>No habits have been added yet. Please add a new habit.</p>
+            </div>
+        {% endif %}
+
+        <!-- Botones para cambiar de mes y año -->
+        <div class="box">
+            <div class="button-group">
+                <div class="buttons">
+                    <a class="button is-link" href="{% url 'tracker:index' current_year|add:'-1' current_month %}">← Previous Year</a>
+                    <a class="button is-link" href="{% url 'tracker:index' current_year current_month|add:'-1' %}">← Previous Month</a>
+                </div>
+                <div class="buttons">
+                    <a class="button is-link" href="{% url 'tracker:index' current_year current_month|add:'1' %}">Next Month →</a>
+                    <a class="button is-link" href="{% url 'tracker:index' current_year|add:'1' current_month %}">Next Year →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón para agregar un nuevo hábito -->
+        <form method="POST" action="{% url 'tracker:add_habit' %}" class="box">
+            {% csrf_token %}
+            <button type="submit" class="button is-link is-fullwidth">Add Habit</button>
+        </form>
+    </div>
+</body>
+
+ {% endblock %}
+
+</html>

@@ -9,7 +9,7 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path('tasks/', include('tasks.urls')),
     path('calendar/', include('task_calendar.urls')),
-    path('habits/', include('habits.urls')),
+    path('tracker', include('tracker.urls')),
     path('flow/', include('flow.urls')),
     path('my_rank/', include('my_rank.urls')),
 ]

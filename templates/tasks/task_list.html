@@ -49,40 +49,42 @@
 
             <!-- Contenedor de los grupos -->
             <div class="columns is-multiline" id="group-list">
-                {% for group, tasks in groups.items %}
-                    <div class="column is-one-quarter">
-                        <div class="box group" data-group="{{ group }}">
-                            <h2 class="subtitle">
-                                {{ group|default:"Ungrouped" }}
-                            </h2>
-                            <ul>
-                                {% for task in tasks %}
-                                    <li class="task-item">
-                                        <input type="checkbox" onclick="toggleTaskCompletion({{ task.id }}, this)" {% if task.completed %}checked{% endif %}>
-                                        <span style="{% if task.completed %}text-decoration: line-through !important;{% endif %}">
-                                            <a href="{% url 'edit_task' task.id %}">{{ task.title }}</a>
-                                        </span>
-                                        {% if task.due_date %}
-                                            <span> - {{ task.due_date|date:"d/m" }}</span>
-                                        {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                {% endfor %}
+            {% for group, tasks in groups.items %}
+            <div class="column is-one-quarter">
+            <div class="box group" data-group="{{ group }}">
+            <h2 class="subtitle">
+            {{ group|default:"Ungrouped" }}
+            </h2>
+            <ul>
+            {% for task in tasks %}
+            <li class="task-item">
+            <input type="checkbox" onclick="toggleTaskCompletion({{ task.id }}, this)" {% if task.completed %}checked{% endif %}>
+            <span style="{% if task.completed %}text-decoration: line-through !important;{% endif %}">
+            <a href="{% url 'edit_task' task.id %}">{{ task.title }}</a>
+            </span>
+            {% if task.due_date %}
+            <span> - {{ task.due_date|date:"d/m" }}</span>
+            {% endif %}
+            </li>
+            {% endfor %}
+            </ul>
+            </div>
+            </div>
+            {% endfor %}
             </div>
 
             <!-- Botones de acción -->
             <div class="buttons">
-                <a href="{% url 'add_task' %}" class="button is-primary">Add Task</a>
+                <a href="{% url 'add_task' %}" class="button is-link">Add Task</a>
                 <a href="{% url 'view_calendar' %}" class="button is-link">View Calendar</a>
             </div>
 
             <!-- Botón para eliminar todas las tareas completadas -->
-            <form method="post" action="{% url 'delete_completed_tasks' %}" onsubmit="return confirm('Are you sure you want to delete all completed tasks?');">
+            <form method="post" action="{% url 'delete_completed_tasks' %}" 
+            onsubmit="return confirm('Are you sure you want to delete all completed tasks?');">
                 {% csrf_token %}
-                <button type="submit" class="button is-danger is-fullwidth">Delete All Completed Tasks</button>
+                <button type="submit" class="button is-fullwidth" 
+                style="background-color: #C70039; color: white;">Delete All Completed Tasks</button>
             </form>
         </div>
     </section>
@@ -131,10 +133,10 @@
         if (data.success) {
             if (checkbox.checked) {
                 checkbox.nextElementSibling.style.textDecoration = "line-through";
-                checkbox.nextElementSibling.style.color = "gray"; // Opcional: Cambia el color del texto
+                checkbox.nextElementSibling.style.color = "gray";
             } else {
                 checkbox.nextElementSibling.style.textDecoration = "none";
-                checkbox.nextElementSibling.style.color = "black"; // Opcional: Cambia el color del texto
+                checkbox.nextElementSibling.style.color = "black";
             }
         } else {
             alert('Failed to update task status.');

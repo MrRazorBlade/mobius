@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Habit</title>
+    <!-- Enlace a Bulma CSS desde CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+</head>
+<body>
+    {% load custom_filters %}
+    <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered" style="color: #C70039" >Delete Habit</h1>
+            <div class="box">
+                <p>Are you sure you want to delete the habit "<strong>{{ habit.name }}</strong>"?</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="field is-grouped is-grouped-right">
+                        <div class="control">
+                            <button class="button" type="submit" style="background-color: #C70039; color: white;">Yes, delete</button>
+                        </div>
+                        <div class="control">
+                            <a class="button is-light" href="{% url 'tracker:index' %}">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

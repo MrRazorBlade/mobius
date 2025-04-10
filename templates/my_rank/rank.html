@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="title has-text-centered">Your Rank</h1>
+
+        <!-- Caja combinada para Current Rank y Next Rank -->
+        <div class="box">
+            <div class="columns is-vcentered">
+                <!-- Columna para el rango actual -->
+                <div class="column has-text-left">
+                    <p class="subtitle">Current Rank</p>
+                    <h2 class="title">{{ rank.name }}</h2>
+                    <p>Total Points: <strong>{{ total_points }}</strong></p>
+                </div>
+
+                {% if next_rank %}
+                <!-- Columna para el siguiente rango (sólo si hay un siguiente rango) -->
+                <div class="column has-text-right">
+                    <p class="subtitle">Next Rank</p>
+                    <h2 class="title">{{ next_rank.name }}</h2>
+                    <p>Points Needed: <strong>{{ next_rank.min_points }}</strong></p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Barra de progreso que ocupa toda la longitud, solo si hay un siguiente rango -->
+        {% if next_rank %}
+        <div class="box">
+            <p class="has-text-centered">Progress for Next Rank: <strong>{{ progress|floatformat:0 }}%</strong></p>
+            <progress class="progress is-primary" value="{{ progress }}" max="100">
+                {{ progress }}%
+            </progress>
+        </div>
+        {% endif %}
+
+        <!-- Descripción motivacional del rango actual -->
+        <div class="box">
+            <p class="has-text-centered">{{ rank.description }}</p>
+        </div>
+
+        {% if progress == 100 and rank.name == "He Who Remains" %}
+            <div class="notification is-success has-text-centered" style="margin-top: 20px; padding: 20px;">
+                <h1 class="title is-4"> Congratulations! You've Reached the End of Time!</h1>
+                <p class="subtitle is-6" style="margin-top: 10px;">
+                    Along the way, you've mastered the art of time management, discipline, effort, and resilience.
+                </p>
+                <p class="subtitle is-6" style="margin-top: 10px;">
+                    Thank you for choosing Mobius to guide you on this journey!
+                </p>
+                <p class="has-text-weight-bold" style="margin-top: 20px;">
+                    - The Mobius Developer Team
+                </p>
+            </div>
+        {% endif %}
+
+        <!-- Botón para desplegar el menú - Alineado a la derecha -->
+        <div class="field" style="margin-top: 20px;">
+            <div class="control has-text-left">
+                <button class="button is-info" id="toggle-rank-info">
+                    Show Rank Info
+                </button>
+            </div>
+        </div>
+
+        <!-- Menú desplegable de rangos -->
+        <div id="rank-info" class="box" style="display: none;">
+            <h2 class="title is-4">Rank Information</h2>
+            <ul>
+                {% for rank in ranks %}
+                <li><strong>{{ rank.name }}:</strong> 
+                    {% if rank.max_points is None %}
+                        +{{ rank.min_points }} points
+                    {% else %}
+                        {{ rank.min_points }} - {{ rank.max_points }} points
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript para mostrar/ocultar el menú -->
+<script>
+    document.getElementById('toggle-rank-info').addEventListener('click', function() {
+        var rankInfo = document.getElementById('rank-info');
+        if (rankInfo.style.display === 'none' || rankInfo.style.display === '') {
+            rankInfo.style.display = 'block';
+            this.textContent = 'Hide Rank Info';
+        } else {
+            rankInfo.style.display = 'none';
+            this.textContent = 'Show Rank Info';
+        }
+    });
+</script>
+
+{% endblock %}

@@ -80,12 +80,21 @@ def edit_task(request, task_id):
 @login_required
 def toggle_task_completion(request, task_id):
     task = get_object_or_404(Task, id=task_id, user=request.user)
-    if request.method == 'POST':
-        task.completed = not task.completed
-        task.save()
-        return JsonResponse({'success': True})
-    return redirect('task_list')
 
+    if task.completed:
+        # Si la tarea ya está completada, se desmarca como no completada
+        task.completed = False
+        task.save()  # Guardar el nuevo estado de la tarea
+    else:
+        # Si la tarea no estaba completada, se marca como completada
+        task.completed = True
+        if not task.reward_claimed:
+            task.reward_claimed = True
+            task.user.add_points(1)
+            task.user.save()
+        task.save()  # Guardar el nuevo estado de la tarea
+
+    return JsonResponse({'success': True})
 
 # Vista para eliminar una tarea
 

@@ -1,6 +1,7 @@
 from django.urls import path
-from . import views
+from .views import assign_point, flow
 
 urlpatterns = [
-    path('', views.flow, name='flow'),
+    path('', flow, name='flow'),
+    path('assign-point/', assign_point, name='assign_point'),
 ]

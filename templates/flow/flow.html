@@ -17,8 +17,8 @@
             </div>
             <br><br>
             <button class="button is-success" id="start-btn">Start</button>
-            <button class="button is-warning" id="stop-btn" disabled>Stop</button>
-            <button class="button is-danger" id="reset-btn" disabled>Reset</button>
+            <button class="button is-link" id="stop-btn" disabled>Stop</button>
+            <button class="button" style="background-color: #C70039; color: white;" id="reset-btn" disabled>Reset</button>
         </div>
     </div>
 </section>
@@ -38,12 +38,49 @@
 
     pauseIntervalSelect.addEventListener('change', function() {
         pauseInterval = parseInt(this.value);
+        localStorage.setItem('pauseInterval', pauseInterval); // Guardar en localStorage
     });
+
+    function saveTimerState() {
+        localStorage.setItem('startTime', Date.now());
+        localStorage.setItem('totalTime', totalTime);
+    }
+
+    function restoreTimerState() {
+        const savedStartTime = localStorage.getItem('startTime');
+        const savedTotalTime = localStorage.getItem('totalTime');
+        const savedPauseInterval = localStorage.getItem('pauseInterval');
+
+        if (savedPauseInterval) {
+            pauseInterval = parseInt(savedPauseInterval);
+            pauseIntervalSelect.value = pauseInterval;
+        }
+
+        if (savedStartTime) {
+            const elapsed = Math.floor((Date.now() - savedStartTime) / 1000);
+            totalTime = parseInt(savedTotalTime) + elapsed;
+
+            let hours = Math.floor(totalTime / 3600);
+            let minutes = Math.floor((totalTime % 3600) / 60);
+            let seconds = totalTime % 60;
+
+            timeDisplay.textContent = 
+                (hours < 10 ? '0' + hours : hours) + ':' +
+                (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                (seconds < 10 ? '0' + seconds : seconds);
+
+            if (totalTime < pauseInterval) {
+                startTimer();
+            }
+        }
+    }
 
     function startTimer() {
         startBtn.disabled = true;
         stopBtn.disabled = false;
         resetBtn.disabled = true;
+
+        saveTimerState();
 
         timer = setInterval(function() {
             totalTime++;
@@ -56,11 +93,18 @@
                 (minutes < 10 ? '0' + minutes : minutes) + ':' +
                 (seconds < 10 ? '0' + seconds : seconds);
 
-            // Check for pause interval limit
+            // Asignar un punto cada 30 minutos (1800 segundos)
+            if (totalTime % 1800 === 0) {  // Temporalmente, cada segundo para pruebas
+                assignPointToUser();  // Llamar a la función para asignar puntos
+            }
+
+            // Verificar si se alcanzó el intervalo de pausa
             if (totalTime % pauseInterval === 0) {
                 alert("¡Enhorabuena por mantener tu Flow! Es hora de tomar un descanso.");
-                stopTimer(); // Automatically stop the timer
+                stopTimer(); // Detener el temporizador automáticamente
             }
+
+            saveTimerState();  // Guardar el estado en cada iteración
         }, 1000);
     }
 
@@ -69,17 +113,39 @@
         startBtn.disabled = false;
         stopBtn.disabled = true;
         resetBtn.disabled = false;
+        localStorage.removeItem('startTime');  // Eliminar el tiempo de inicio
     }
 
     function resetTimer() {
         totalTime = 0;
         timeDisplay.textContent = "00:00:00";
         resetBtn.disabled = true;
+        localStorage.removeItem('startTime');  // Eliminar el tiempo de inicio
+        localStorage.removeItem('totalTime');  // Eliminar el tiempo total
     }
 
     startBtn.addEventListener('click', startTimer);
     stopBtn.addEventListener('click', stopTimer);
     resetBtn.addEventListener('click', resetTimer);
+
+    function assignPointToUser() {
+        // Hacer una solicitud AJAX al servidor para asignar un punto
+        fetch('/flow/assign-point/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'  // Incluir el CSRF token para la seguridad
+            },
+            body: JSON.stringify({ 'duration': 30 })  // Opcional: pasar datos adicionales
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Punto asignado:', data);
+        })
+        .catch((error) => {
+            console.error('Error al asignar el punto:', error);
+        });
+    }
 
     function notifyUser(message) {
         if (Notification.permission === "granted") {
@@ -96,5 +162,8 @@
     if ("Notification" in window) {
         Notification.requestPermission();
     }
+
+    // Restaurar el estado del temporizador cuando se carga la página
+    restoreTimerState();
 </script>
 {% endblock %}

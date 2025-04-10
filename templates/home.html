@@ -3,24 +3,48 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<section class="section">
-    <div class="container">
-        <div class="columns is-centered">
-            <div class="column is-half has-text-centered">
-                {% if user.is_authenticated %}
-                    <p class="title">Hi {{ user.username }}!</p>
-                    <form id="logout-form" method="post" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button class="button is-danger is-outlined" type="submit">Log Out</button>
-                    </form>
-                {% else %}
-                    <p class="title">You are not logged in</p>
-                    <div class="buttons is-centered">
-                        <a class="button is-primary" href="{% url 'login' %}">Log In</a>
-                        <a class="button is-link" href="{% url 'signup' %}">Sign Up</a>
+<section class="hero is-fullheight" style="background-color: #D1651D;">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            {% if user.is_authenticated %}
+                <p class="title is-1 has-text-white">Hi {{ user.username }}, welcome to Mobius!</p>
+                <p class="subtitle is-4 has-text-white">Your ultimate time management tool designed to help you stay productive, achieve your goals, and manage your time effectively. With Mobius, you'll find time for (almost) everything. </p>
+                
+                <div class="columns is-centered" style="margin-top: 50px;">
+                    <div class="column is-10">
+                        <div class="box">
+                            <p class="title is-4">Mobius Features</p>
+                            <ul class="content has-text-left">
+                                <li>✔ Track and plan your tasks efficiently.</li>
+                                <li>✔ Keep track of your task's due dates with the calendar.</li>
+                                <li>✔ Monitor your habits and build positive routines.</li>
+                                <li>✔ Utilize the Flow feature to manage work sessions.</li>
+                                <li>✔ Climb the ranks by earning points and improving your time management skills.</li>
+                            </ul>
+                        </div>
                     </div>
-                {% endif %}
-            </div>
+                </div>
+
+                <div class="columns is-centered" style="margin-top: 30px;">
+                    <div class="column is-4">
+                        <form id="logout-form" method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button class="button is-link is-fullwidth" type="submit">Log Out</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <p class="title is-1 has-text-white">Welcome to Mobius</p>
+                <p class="subtitle is-3 has-text-white">You are not logged in</p>
+                <div class="columns is-centered" style="margin-top: 30px;">
+                    <div class="column is-4">
+                        <a class="button is-primary is-fullwidth" href="{% url 'login' %}">Log In</a>
+                    </div>
+                    <div class="column is-4">
+                        <a class="button is-link is-fullwidth" href="{% url 'signup' %}">Sign Up</a>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 </section>
